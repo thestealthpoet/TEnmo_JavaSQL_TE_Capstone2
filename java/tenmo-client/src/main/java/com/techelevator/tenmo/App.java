@@ -12,6 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+
 public class App {
 
 private static final String API_BASE_URL = "http://localhost:8080/";
@@ -76,14 +78,14 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void viewCurrentBalance() {
-		System.out.println(currentUser.getToken());
-
+		//System.out.println(currentUser.getToken());
+		BigDecimal balance = new BigDecimal(0);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBearerAuth(currentUser.getToken());
 		HttpEntity entity = new HttpEntity((httpHeaders));
 
-		Account account = restTemplate.exchange("http://localhost:8080/balance", HttpMethod.GET, entity, Account.class).getBody();
-		System.out.println(account.getBalance());
+		balance = restTemplate.exchange("http://localhost:8080/balance/" + currentUser.getUser().getId(), HttpMethod.GET, entity, BigDecimal.class).getBody();
+		System.out.println(balance.toString() + "TE Bucks");
 
 	}
 
