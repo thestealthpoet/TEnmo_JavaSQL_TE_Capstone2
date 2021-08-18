@@ -2,6 +2,7 @@ package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
@@ -13,8 +14,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class App {
+
+	Scanner input = new Scanner(System.in);
 
 private static final String API_BASE_URL = "http://localhost:8080/";
     
@@ -100,9 +106,36 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
-		
-	}
+
+		List<String> userList = new ArrayList<>();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setBearerAuth(currentUser.getToken());
+		HttpEntity entity = new HttpEntity((httpHeaders));
+
+		userList = restTemplate.exchange("http://localhost:8080/users", HttpMethod.GET, entity, List.class).getBody();
+
+		for (String username : userList){
+			System.out.println(username);
+		}
+		boolean shouldLoop = true;
+		//while (shouldLoop) {
+
+		System.out.print("Please enter the username you wish to transfer TE bucks to: ");
+		String username = input.nextLine();
+
+			for (String u : userList) {
+				if (u.equals(username)) {
+					shouldLoop = false;
+					System.out.println("hello");
+				}
+				if (!u.equals(username))
+					System.out.println("Invalid username. Please try again!");
+
+				}
+			}
+
+
+	//}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
