@@ -9,8 +9,7 @@ public class Transfer {
     private int accountFromId;
     private int accountToId;
     private BigDecimal transferAmount;
-    private String userFrom;
-    private String userTo;
+
 
     public Transfer() {
         //empty constructor
@@ -74,19 +73,4 @@ public class Transfer {
         this.transferAmount = transferAmount;
     }
 
-    public String getUserFrom() {
-        return userFrom;
-    }
-
-    public void setUserFrom(String userFrom) {
-        this.userFrom = userFrom;
-    }
-
-    public String getUserTo() {
-        return userTo;
-    }
-
-    public void setUserTo(String userTo) {
-        this.userTo = userTo;
-    }
 }

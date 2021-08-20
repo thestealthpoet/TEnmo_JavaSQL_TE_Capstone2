@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TransferDao {
 
-    void sendTransfer(int accountFromId, int accountToId, BigDecimal transferAmount);
+    void sendTransfer(Transfer transfer);
 
     List<Transfer> getTransferHistory(int userId);
 

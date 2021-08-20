@@ -52,7 +52,7 @@ public class TransferService {
         return recipient;
     }
 
-    public Transfer transferFunds() {
+    public void transferFunds() {
         AccountServices accountServices = new AccountServices(baseUrl, currentUser);
         Scanner userInput = new Scanner(System.in);
         User recipient = getUserFromChoiceForTransfer();
@@ -99,17 +99,17 @@ public class TransferService {
 
         } else {
             Transfer transfer = new Transfer(2, 2, currentUser.getUser().getId(), recipient.getId(), transferAmount);
-            System.out.println(transfer.toString());
+
+            HttpEntity<Transfer> transferEntity = new HttpEntity<>(transfer, makeAuthEntity().getHeaders());
+
+            //try {
+                Transfer newTransfer = restTemplate.exchange(baseUrl + "transfers", HttpMethod.POST, transferEntity, Transfer.class).getBody();
+            //} catch (Exception e) {
+            //    System.out.println("Something went wrong.  Try again.");
+            //    App.mainMenu();
+           // }
+            System.out.println("Successful Transfer!");
         }
-
-
-
-
-
-
-
-
-        return null;
     }
 
 
