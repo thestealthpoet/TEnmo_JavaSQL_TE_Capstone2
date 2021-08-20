@@ -8,11 +8,13 @@ public interface UserDao {
 
     List<User> findAll();
 
-    List<String> listByUsername();
+    List<User> listByUsernameAndUserId();
 
     User findByUsername(String username);
 
     int findIdByUsername(String username);
 
     boolean create(String username, String password);
+
+    public User findUserById(int id);
 }

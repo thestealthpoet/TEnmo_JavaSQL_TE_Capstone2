@@ -26,7 +26,7 @@ public class ConsoleService {
 		return choice;
 	}
 
-	private Object getChoiceFromUserInput(Object[] options) {
+	public Object getChoiceFromUserInput(Object[] options) {
 		Object choice = null;
 		String userInput = in.nextLine();
 		try {

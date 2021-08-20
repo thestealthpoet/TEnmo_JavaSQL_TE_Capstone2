@@ -46,15 +46,18 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public List<String> listByUsername() {     // TODO REMOVE CURRENT LOGGED IN USER FROM LIST
-        List<String> usernames = new ArrayList<>();
-        String sql = "SELECT username from users;";
+    public List<User> listByUsernameAndUserId() {     // TODO REMOVE CURRENT LOGGED IN USER FROM LIST
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT username, user_id from users;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
         while(results.next()) {
             String username = results.getString("username");
-        usernames.add(username);
+            Long userId = results.getLong("user_id");
+            User user = new User(userId, username);
+            users.add(user);
+
         }
-        return usernames;
+        return users;
     }
 
 
@@ -100,5 +103,14 @@ public class JdbcUserDao implements UserDao {
         user.setActivated(true);
         user.setAuthorities("USER");
         return user;
+    }
+
+    public User findUserById(int id) {
+        for (User user : this.findAll()) {
+            if (user.getId() == id) {
+                return user;
+            }
+        }
+        throw new UsernameNotFoundException("User " + id + " was not found");
     }
 }

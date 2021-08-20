@@ -4,8 +4,10 @@ import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.services.AccountServices;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
+import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +22,9 @@ import java.util.Scanner;
 
 public class App {
 
+	private static ConsoleService console;
+	private static AuthenticatedUser currentUser;
+	private static AuthenticationService authenticationService;
 	Scanner input = new Scanner(System.in);
 
 private static final String API_BASE_URL = "http://localhost:8080/";
@@ -36,9 +41,8 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	private static final String MAIN_MENU_OPTION_LOGIN = "Login as different user";
 	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_VIEW_BALANCE, MAIN_MENU_OPTION_SEND_BUCKS, MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS, MAIN_MENU_OPTION_REQUEST_BUCKS, MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS, MAIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT };
 	
-    private AuthenticatedUser currentUser;
-    private ConsoleService console;
-    private AuthenticationService authenticationService;
+
+
     private RestTemplate restTemplate;
 
     public static void main(String[] args) {
@@ -61,9 +65,9 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		mainMenu();
 	}
 
-	private void mainMenu() {
+	public static void mainMenu() {
 		while(true) {
-			String choice = (String)console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
+			String choice = (String) console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 			if(MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
 				viewCurrentBalance();
 			} else if(MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS.equals(choice)) {
@@ -83,66 +87,86 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		}
 	}
 
-	private void viewCurrentBalance() {
+	private static void viewCurrentBalance() {
+		AccountServices accountServices = new AccountServices(API_BASE_URL, currentUser);
+		System.out.println("Current TE Bucks balance: " + accountServices.getBalance() + " TE.X");
+	}
+
+
+	//This is now encapsulated within the AccountServices class
+	/*private void viewCurrentBalance() {
 		//System.out.println(currentUser.getToken());
 		BigDecimal balance = new BigDecimal(0);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBearerAuth(currentUser.getToken());
 		HttpEntity entity = new HttpEntity((httpHeaders));
 
-		balance = restTemplate.exchange("http://localhost:8080/balance/" + currentUser.getUser().getId(), HttpMethod.GET, entity, BigDecimal.class).getBody();
-		System.out.println(balance.toString() + "TE Bucks");
+		balance = restTemplate.exchange(API_BASE_URL + "balance/" + currentUser.getUser().getId(), HttpMethod.GET, entity, BigDecimal.class).getBody();
+		System.out.println(balance.toString() + " TE Bucks");
 
-	}
+	}*/
 
-	private void viewTransferHistory() {
+	private static void viewTransferHistory() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void viewPendingRequests() {
+	private static void viewPendingRequests() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void sendBucks() {
+	private static void sendBucks() {
+		TransferService transferService = new TransferService(API_BASE_URL, currentUser);
+		transferService.transferFunds();
 
-		List<String> userList = new ArrayList<>();
+
+		/*System.out.print("How many TE Bucks would you like to send?>>>");
+		BigDecimal transferAmount = new BigDecimal(0);
+		transferAmount = input.nextBigDecimal();*/
+
+
+
+		/*List<String> userList = new ArrayList<>();
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setBearerAuth(currentUser.getToken());
 		HttpEntity entity = new HttpEntity((httpHeaders));
 
 		userList = restTemplate.exchange("http://localhost:8080/users", HttpMethod.GET, entity, List.class).getBody();
-
+		System.out.println("****Available users to transfer TE bucks:****" + "\n");
 		for (String username : userList){
 			System.out.println(username);
-		}
-		boolean shouldLoop = true;
-		//while (shouldLoop) {
 
+		}
+		System.out.println("\n");
+		boolean shouldLoop = true;
+		while (shouldLoop) {
 		System.out.print("Please enter the username you wish to transfer TE bucks to: ");
 		String username = input.nextLine();
 
 			for (String u : userList) {
 				if (u.equals(username)) {
 					shouldLoop = false;
-					System.out.println("hello");
+					System.out.println("You got a real user.");
+					break;
 				}
-				if (!u.equals(username))
-					System.out.println("Invalid username. Please try again!");
+			}
 
-				}
+		}
+		System.out.println("Hopefully you find something");*/
+
+
 			}
 
 
 	//}
 
-	private void requestBucks() {
+	private static void requestBucks() {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	private void exitProgram() {
+	private static void exitProgram() {
 		System.exit(0);
 	}
 
@@ -181,7 +205,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
         }
 	}
 
-	private void login() {
+	private static void login() {
 		System.out.println("Please log in");
 		currentUser = null;
 		while (currentUser == null) //will keep looping until user is logged in
@@ -196,7 +220,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		}
 	}
 	
-	private UserCredentials collectUserCredentials() {
+	private static UserCredentials collectUserCredentials() {
 		String username = console.getUserInput("Username");
 		String password = console.getUserInput("Password");
 		return new UserCredentials(username, password);
