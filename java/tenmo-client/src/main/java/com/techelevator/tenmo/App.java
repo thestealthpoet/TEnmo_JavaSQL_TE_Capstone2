@@ -1,14 +1,12 @@
 package com.techelevator.tenmo;
 
-import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.User;
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.AccountServices;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
 import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
+import io.cucumber.java.bs.A;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -118,42 +116,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 
 	private static void sendBucks() {
 		TransferService transferService = new TransferService(API_BASE_URL, currentUser);
-		transferService.transferFunds();
-
-
-		/*System.out.print("How many TE Bucks would you like to send?>>>");
-		BigDecimal transferAmount = new BigDecimal(0);
-		transferAmount = input.nextBigDecimal();*/
-
-
-
-		/*List<String> userList = new ArrayList<>();
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setBearerAuth(currentUser.getToken());
-		HttpEntity entity = new HttpEntity((httpHeaders));
-
-		userList = restTemplate.exchange("http://localhost:8080/users", HttpMethod.GET, entity, List.class).getBody();
-		System.out.println("****Available users to transfer TE bucks:****" + "\n");
-		for (String username : userList){
-			System.out.println(username);
-
-		}
-		System.out.println("\n");
-		boolean shouldLoop = true;
-		while (shouldLoop) {
-		System.out.print("Please enter the username you wish to transfer TE bucks to: ");
-		String username = input.nextLine();
-
-			for (String u : userList) {
-				if (u.equals(username)) {
-					shouldLoop = false;
-					System.out.println("You got a real user.");
-					break;
-				}
-			}
-
-		}
-		System.out.println("Hopefully you find something");*/
+		AccountServices accountServices = new AccountServices(API_BASE_URL, currentUser);
+		Transfer transfer = transferService.transferFunds();
+		//System.out.println(transfer.toString());
+		accountServices.updateBalance(transfer);
 
 
 			}

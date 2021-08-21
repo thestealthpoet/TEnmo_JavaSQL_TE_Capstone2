@@ -73,4 +73,16 @@ public class Transfer {
         this.transferAmount = transferAmount;
     }
 
+    @Override
+    public String toString() {
+        String transferText = "Transfer Information: \nTransferID:" + getTransferId() +
+                "\nTransfer type Id: " + getTransferTypeId() +
+                "\nTransfer status Id: " + getTransferStatusId() +
+                "\nTransfer from account: " + getAccountFromId() +
+                "\nTransfer to account:  " + getAccountToId() +
+                "\nTransfer amount: " + getTransferAmount();
+
+        return transferText;
+    }
+
 }

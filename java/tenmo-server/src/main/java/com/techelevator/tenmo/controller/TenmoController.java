@@ -45,10 +45,23 @@ public class TenmoController {
     public List<User> listAllUsers() {
         return userDao.findAll();
     }
+
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(path="/transfers", method = RequestMethod.POST)
     public void sendTransfer(@RequestBody Transfer transfer) {
         transferDao.sendTransfer(transfer);
+
+    }
+    @RequestMapping(path="/users/balance", method = RequestMethod.PUT)
+    public void updateBalanceAfterTransfer(@RequestBody Transfer transfer) {
+        dao.updateBalanceAfterTransfer(transfer);
+    }
+
+    @RequestMapping(path="transfers/history", method = RequestMethod.GET)
+    public List<Transfer> getTransferHistory(int userId) {
+
+
+        return null;
     }
 
 
