@@ -3,6 +3,7 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlInOutParameter;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -113,4 +114,50 @@ public class JdbcUserDao implements UserDao {
         }
         throw new UsernameNotFoundException("User " + id + " was not found");
     }
+
+    @Override
+    public User getUserTo(int account_id) {
+        User toUser = new User();
+        String sql = "SELECT users.user_id, users.username, users.password_hash\n" +
+                "FROM transfers\n" +
+                "JOIN accounts ON transfers.account_to = accounts.account_id\n" +
+                "JOIN users ON accounts.user_id = users.user_id\n" +
+                "WHERE transfers.account_to = ?;";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, account_id);
+        while (result.next()) {
+            toUser = mapRowToUser(result);
+        }
+
+        return toUser;
+    }
+
+    @Override
+    public User getUserFrom(int account_id) {
+        User fromUser = new User();
+        String sql = "SELECT users.user_id, users.username, users.password_hash\n" +
+                "FROM transfers\n" +
+                "JOIN accounts ON transfers.account_from = accounts.account_id\n" +
+                "JOIN users ON accounts.user_id = users.user_id\n" +
+                "WHERE transfers.account_from = ?;";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, account_id);
+        while (result.next()) {
+            fromUser = mapRowToUser(result);
+        }
+        return fromUser;
+    }
+
+    @Override
+    public User getUserFromAccountId(int account_id) {
+        User fetchedUser = new User();
+        String sql = "SELECT users.user_id, users.username, users.password_hash\n" +
+                "FROM accounts\n" +
+                "JOIN users ON accounts.user_id = users.user_id\n" +
+                "WHERE account_id = ?;";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, account_id);
+        while (result.next()) {
+            fetchedUser = mapRowToUser(result);
+        }
+        return fetchedUser;
+    }
+
 }

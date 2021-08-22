@@ -1,5 +1,7 @@
 package com.techelevator.tenmo;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.AccountServices;
 import com.techelevator.tenmo.services.AuthenticationService;
@@ -11,10 +13,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,7 +27,7 @@ public class App {
 	private static ConsoleService console;
 	private static AuthenticatedUser currentUser;
 	private static AuthenticationService authenticationService;
-	Scanner input = new Scanner(System.in);
+	private static Scanner input = new Scanner(System.in);
 
 private static final String API_BASE_URL = "http://localhost:8080/";
     
@@ -105,9 +109,51 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}*/
 
 	private static void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
+		TransferService transferService = new TransferService(API_BASE_URL, currentUser);
+		List<Transfer> transferList = transferService.listTransferHistory(currentUser.getUser().getId());
+		ObjectMapper mapper = new ObjectMapper();
+		List<Transfer> transferListReal = mapper.convertValue(transferList, new TypeReference<List<Transfer>>() {
+		});
+		System.out.println(String.format("%-20s%-20s%-20s%-20s%-20s%-20s", "Transfer ID ", "Transfer Type ", "Transfer Status ", "Account From ", "Account To ", "Transfer Amount (TE.X)"));
+		for (Transfer t : transferListReal) {
+			System.out.println(String.format("%-20s%-20s%-20s%-20s%-20s%-20s", t.getTransferId(), t.getTransferTypeId(), t.getTransferStatusId(), t.getAccountFromId(), t.getAccountToId(), t.getTransferAmount().toString()));
+
+
+		}
+		System.out.println("\n");
+		System.out.print("Would you like details about a specific transfer? (Y/N)>>>");
+		String choice = input.nextLine();
+		if (choice.equalsIgnoreCase("n")) {
+			System.out.println("Thank you for using Tenmo!");
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				System.out.println("Not sure how this would even happen.");
+			}
+			App.mainMenu();
+		} else {
+			AccountServices accountServices = new AccountServices(API_BASE_URL, currentUser);
+			System.out.print("Please enter the Transfer ID you wish to inspect. >>>");
+			String choice2 = input.nextLine();
+			int transferId = Integer.parseInt(choice2);
+			Transfer fetchedTransfer = transferService.getTransferDetails(transferId);
+			User userTo = accountServices.getUserByAccountId(fetchedTransfer.getAccountToId());
+			User userFrom = accountServices.getUserByAccountId(fetchedTransfer.getAccountFromId());
+
+			System.out.println("------------------------------------------");
+			System.out.println("Transfer Details");
+			System.out.println("------------------------------------------");
+			System.out.println(String.format("%-15s", "Transfer ID:" + fetchedTransfer.getTransferId()));
+			System.out.println(String.format("%-15s", "From:" + userFrom.getUsername()));
+			System.out.println(String.format("%-15s", "To:" + userTo.getUsername()));
+			System.out.println(String.format("%-15s", "Type ID:" + fetchedTransfer.getTransferTypeId()));
+			System.out.println(String.format("%-15s", "Amount:" + fetchedTransfer.getTransferAmount() + "TE.X"));
+
+
+		}
 	}
+		
+
 
 	private static void viewPendingRequests() {
 		// TODO Auto-generated method stub

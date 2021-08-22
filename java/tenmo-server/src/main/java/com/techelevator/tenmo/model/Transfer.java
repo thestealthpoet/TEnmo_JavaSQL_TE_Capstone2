@@ -15,10 +15,10 @@ public class Transfer {
     private int accountToId;
     @DecimalMin(value = "0.01", message = "A transfer must have a minimum value of 0.01 TE.X")
     private BigDecimal transferAmount;
-    @NotBlank(message = "A transfer must originate from a valid user.")
+    /*@NotBlank(message = "A transfer must originate from a valid user.")
     private String userFrom;
     @NotBlank(message = "A transfer must be sent to a valid user.")
-    private String userTo;
+    private String userTo;*/
 
     public Transfer() {
         //empty constructor
@@ -82,7 +82,7 @@ public class Transfer {
         this.transferAmount = transferAmount;
     }
 
-    public String getUserFrom() {
+    /*public String getUserFrom() {
         return userFrom;
     }
 
@@ -96,5 +96,5 @@ public class Transfer {
 
     public void setUserTo(String userTo) {
         this.userTo = userTo;
-    }
+    }*/
 }

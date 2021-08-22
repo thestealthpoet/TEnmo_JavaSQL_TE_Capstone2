@@ -4,6 +4,7 @@ package com.techelevator.tenmo.services;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.view.ConsoleService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,11 @@ public class AccountServices {
         //} catch (Exception e) {
 
         //}
+    }
+    public User getUserByAccountId(int account_id) {
+        User fetchedUser = restTemplate.exchange(baseUrl + "users/account/" + account_id, HttpMethod.GET, makeAuthEntity(), User.class).getBody();
+
+        return fetchedUser;
     }
 
 

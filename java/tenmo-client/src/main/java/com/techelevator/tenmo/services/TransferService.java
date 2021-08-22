@@ -6,15 +6,20 @@ import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.view.ConsoleService;
 import org.springframework.http.*;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 import com.techelevator.tenmo.App;
+
+import javax.xml.transform.TransformerFactory;
 
 public class TransferService {
     private String baseUrl;
@@ -111,7 +116,23 @@ public class TransferService {
             return transfer;
 
     }
+    public List<Transfer> listTransferHistory(int userId) {
+        List<Transfer> transferHistory = null;
 
+        //try {
+            transferHistory = restTemplate.exchange(baseUrl + "transfers/history/" + userId, HttpMethod.GET, makeAuthEntity(), List.class).getBody();
+        //} catch (RestClientResponseException e) {
+        //    System.out.println("Not sure, but you got this far.");
+       // }
+
+        return transferHistory;
+    }
+
+    public Transfer getTransferDetails(int transferId) {
+        Transfer transferDetails = restTemplate.exchange(baseUrl + "transfers/" + transferId, HttpMethod.GET, makeAuthEntity(), Transfer.class).getBody();
+
+        return transferDetails;
+    }
 
     private HttpEntity makeAuthEntity(){
         HttpHeaders headers = new HttpHeaders();

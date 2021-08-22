@@ -57,11 +57,18 @@ public class TenmoController {
         dao.updateBalanceAfterTransfer(transfer);
     }
 
-    @RequestMapping(path="transfers/history", method = RequestMethod.GET)
-    public List<Transfer> getTransferHistory(int userId) {
+    @RequestMapping(path="/transfers/history/{userId}", method = RequestMethod.GET)
+    public List<Transfer> getTransferHistory(@PathVariable int userId) {
+        return transferDao.getTransferHistory(userId);
+    }
 
-
-        return null;
+    @RequestMapping(path="/transfers/{transferId}", method = RequestMethod.GET)
+    public Transfer getTransferDetails(@PathVariable int transferId) {
+        return transferDao.getTransferDetails(transferId);
+    }
+    @RequestMapping(path="/users/account/{account_id}", method = RequestMethod.GET)
+    public User getUserFromAccountId(@PathVariable int account_id) {
+        return userDao.getUserFromAccountId(account_id);
     }
 
 
